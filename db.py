@@ -1,6 +1,7 @@
 import sqlite3
 
-DATABASE = 'slack.db'
+DATABASE = "slack.db"
+
 
 def init_db():
     """
@@ -8,15 +9,27 @@ def init_db():
     """
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
-        # Create messages table
-        cursor.execute('''
+
+        cursor.execute(
+            """
+        CREATE TABLE IF NOT EXISTS authors (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT UNIQUE NOT NULL,
+            thread_ts TEXT
+        )
+        """
+        )
+
+        cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS messages (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                author TEXT NOT NULL,
+                author_id INTEGER NOT NULL,
                 message TEXT NOT NULL,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
                 bot BOOLEAN DEFAULT FALSE
             )
-        ''')
+        """
+        )
 
         conn.commit()
